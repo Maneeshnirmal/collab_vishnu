@@ -1,0 +1,29 @@
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-2a
+      ImageId: ami-0e83be366243f524a
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref ServerSecurityGroup
+
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow connections from specified CIDR ranges
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  MyS3Bucket:
+    Type: 'AWS::S3::Bucket'  #!Sub intrinsic function to create the bucket name by combining the pseudo parameters ${AWS::AccountId}, ${AWS::Region}, and ${Timestamp}
+    Properties:
+      BucketName: !Sub "my-bucket-${AWS::AccountId}-${Timestamp}"
+
